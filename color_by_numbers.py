@@ -47,6 +47,21 @@ def get_numbers(image, num_colors=8):
     # Divide to get which grey value to display
     return image // N
 
+
+def to_ascii(image):
+    """
+    Take an image with 8 or less colors and
+    convert it to an ascii representation
+    """
+    # Make a lookup table of the ascii characters
+    # to represent the image
+    gradient = '@#*+-:. '
+    table = numpy.array(list(gradient))
+
+    # Use Numpy's fancy indexing to look up all the
+    # characters at once
+    return table[image]
+
 def main():
     """
     Main Script
@@ -67,6 +82,13 @@ def main():
     # Reduce the color depth
     numbers = get_numbers(small)
     cv2.imwrite('output/reduced.png', numbers * (256 // 8))
+
+    # Convert to ascii!
+    text = to_ascii(numbers)
+
+    # Print the result!
+    for row in text:
+        print(''.join(row))
 
 if __name__ == '__main__':
     main()
