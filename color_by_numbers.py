@@ -35,6 +35,17 @@ def downsample(image, block_size=32):
     # Return the new tiny image
     return result
 
+def get_numbers(image, num_colors=8):
+    """
+    Convert from a range of [0, 256)
+    to a range [0, num_colors). This will
+    be the grey values used in the color by numbers.
+    """
+    # How  many steps are per color?
+    N = 256 // num_colors
+
+    # Divide to get which grey value to display
+    return image // N
 
 def main():
     """
@@ -52,6 +63,10 @@ def main():
     # Downsample the grayscale image
     small = downsample(gray)
     cv2.imwrite('output/downsampled.png', small)
+
+    # Reduce the color depth
+    numbers = get_numbers(small)
+    cv2.imwrite('output/reduced.png', numbers * (256 // 8))
 
 if __name__ == '__main__':
     main()
