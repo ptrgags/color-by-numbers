@@ -6,6 +6,9 @@
 % how big is each square?
 /sqr_size 0.25 inch def
 
+% font size is calculated based on square size
+/font_size 0.5 sqr_size mul def
+
 % margin size in all directions
 /margin 1 inch def
 
@@ -30,15 +33,42 @@
     stroke
 } def
 
+% print a character inside a box. (x, y) is the bottom left corner
+% of the box
+% print_char char x y -> ---
+/print_char {
+    newpath
+    % char x y -> char
+    moveto
+
+    % Move closer to the center by 1/4 the square size
+    % TODO: actually center this with stringwidth
+    sqr_size 0.25 mul
+    dup rmoveto
+
+    % char is on top of stack
+    show
+} def
+
+% Set the font for writing
+/Arial findfont
+font_size scalefont
+setfont
 
 % iterate over rows.
 margin sqr_size top {
-    % y = row position
+    % y = loop counter
     /y exch def
 
     % iterate over columns
     margin sqr_size right {
-        % x is alredy on the stack
-        y square
+        % x = loop counter
+        /x exch def
+
+        % display the character and the box around it
+        (1) x y print_char
+        x y square
     } for
 } for
+
+showpage
