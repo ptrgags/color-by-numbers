@@ -1,0 +1,44 @@
+%!
+
+% 72 dots per inch
+/inch {72 mul} def
+
+% how big is each square?
+/sqr_size 0.25 inch def
+
+% margin size in all directions
+/margin 1 inch def
+
+% size of a letter page
+/width 8.5 inch def
+/height 11 inch def
+
+% right and top edges (accounting for margin
+/right width margin sub def
+/top height margin sub def
+
+% draw a square on the screen. (x, y) is the bottom left corner
+% square x y -> ---
+/square {
+    newpath
+    % x and y  are already on the stack!
+    moveto
+    sqr_size 0 rlineto
+    0 sqr_size rlineto
+    sqr_size neg 0 rlineto
+    closepath
+    stroke
+} def
+
+
+% iterate over rows.
+margin sqr_size top {
+    % y = row position
+    /y exch def
+
+    % iterate over columns
+    margin sqr_size right {
+        % x is alredy on the stack
+        y square
+    } for
+} for
