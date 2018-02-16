@@ -5,6 +5,7 @@ out more.
 """
 import cv2
 import numpy
+import io
 
 def downsample(image, block_size=32):
     """
@@ -62,6 +63,22 @@ def to_ascii(image):
     # characters at once
     return table[image]
 
+def format_postscript(image):
+    """
+    Take an image and format it as a fragment of a
+    postscript file. The rest of it will come fro
+    template.ps
+    """
+    stream = io.StringIO()
+    stream.write('[\n')
+    for row in image:
+        space_delimited = ' '.join(str(x) for x in row)
+        stream.write('    [{}]\n'.format(space_delimited))
+
+    stream.write('] show_image\n')
+    stream.write('showpage')
+    return stream.getvalue()
+
 def main():
     """
     Main Script
@@ -73,22 +90,20 @@ def main():
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # Output the grayscale image
-    cv2.imwrite('output/gray.png', gray)
+    #cv2.imwrite('output/gray.png', gray)
 
     # Downsample the grayscale image
     small = downsample(gray)
-    cv2.imwrite('output/downsampled.png', small)
+    #cv2.imwrite('output/downsampled.png', small)
 
     # Reduce the color depth
-    numbers = get_numbers(small)
+    numbers = get_numbers(small, 6)
     cv2.imwrite('output/reduced.png', numbers * (256 // 8))
 
-    # Convert to ascii!
-    text = to_ascii(numbers)
-
-    # Print the result!
-    for row in text:
-        print(''.join(row))
+    # format a Postscript file with the image
+    fragment = format_postscript(numbers)
+    print(fragment)
+    #write_file(fragment)
 
 if __name__ == '__main__':
     main()
