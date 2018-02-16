@@ -21,7 +21,7 @@
 /top height margin sub def
 
 % draw a square on the screen. (x, y) is the bottom left corner
-% square x y -> ---
+% square: x y -> ---
 /square {
     newpath
     % x and y  are already on the stack!
@@ -35,7 +35,7 @@
 
 % print a character inside a box. (x, y) is the bottom left corner
 % of the box
-% print_char char x y -> ---
+% print_char: char x y -> ---
 /print_char {
     newpath
     % char x y -> char
@@ -50,25 +50,40 @@
     show
 } def
 
+% color_by_numbers: image -> ---
+/show_image {
+    % start the first row at 1 margin from the bottom
+    /y margin def
+    % array of arrays is already on the stack
+    {
+        % start the column number at 1 margin from the
+        /x margin def
+        % array is already on the stack
+        {
+            % character is already on the box
+            1 string cvs x y print_char
+            x y square
+
+            % increment the column position
+            /x x sqr_size add def
+        } forall
+
+        % increment the row position
+        /y y sqr_size add def
+    } forall
+} def
+
+
 % Set the font for writing
 /Arial findfont
 font_size scalefont
 setfont
 
-% iterate over rows.
-margin sqr_size top {
-    % y = loop counter
-    /y exch def
-
-    % iterate over columns
-    margin sqr_size right {
-        % x = loop counter
-        /x exch def
-
-        % display the character and the box around it
-        (1) x y print_char
-        x y square
-    } for
-} for
+% Put the numbers for the image here
+[
+    [0 1 2 3 4 5 6]
+    [0 1 2 3 4 5 6]
+    [0 1 2 3 4 5 6]
+] show_image
 
 showpage
