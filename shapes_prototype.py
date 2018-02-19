@@ -92,6 +92,12 @@ def scaling_factor(img):
     width_points = width_inches * points_per_inch
     return width_points / width_pixels
 
+def quantize(color, num_colors=6):
+    """
+    Remap from the range of [0, 256) -> [0, num_colors) -> [0, 1)
+    """
+    return color // (256 // num_colors) / num_colors
+
 def process_shapes(params, img):
     points_per_pixel = scaling_factor(img)
     print(points_per_pixel)
@@ -99,7 +105,8 @@ def process_shapes(params, img):
         x_points = x * points_per_pixel
         y_points = y * points_per_pixel
         r_points = r * points_per_pixel
-        print(f'{x_points:.2f} {y_points:.2f} {r_points:.2f} circle')
+        color = quantize(avg_color)
+        print(f'{color:.2f} {x_points:.2f} {y_points:.2f} {r_points:.2f} circle')
 
 
 def main():

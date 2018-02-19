@@ -39,22 +39,23 @@
     end
 } def
 
-% circle: x y r -> ---
+% circle: gray x y r -> ---
 /circle {
-    1 dict begin
     gsave
     newpath
     % x, y, and r are already on the stack
     0 360 arc
     closepath
     gsave
-    1.0 setgray
+    %1.0 setgray
+    setgray
     fill
     grestore
+    % gray value is already on the stack
+    %setgray
     stroke
 
     grestore
-    end
 } def
 
 /page_width 8.5 inch def
