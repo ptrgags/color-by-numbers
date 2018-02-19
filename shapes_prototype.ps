@@ -6,7 +6,7 @@
 % Halving a quantity is a common operation here
 /halve {2 div} def
 
-% Dra a rectangle centered around x and y
+% Draw a rectangle centered around x and y
 % rect: center_x center_y w, h
 /rect {
     % Store the parameters in the dict stack
@@ -21,6 +21,7 @@
     /half_h h halve def
 
     % Draw a rectangle centered at (center_x, center_y)
+    gsave
     newpath
     % Move to the center of the square
     center_x center_y moveto
@@ -32,8 +33,21 @@
     w neg 0 rlineto
     closepath
     stroke
+    grestore
 
     % Pop dict stack
+    end
+} def
+
+% circle x y r
+/circle {
+    1 dict begin
+    gsave
+    newpath
+    % x, y, and r are already on the stack
+    0 360 arc
+    stroke
+    grestore
     end
 } def
 
@@ -42,3 +56,4 @@
 
 % Draw a 2x1" box in the center of the page
 page_width halve page_height halve 2 inch 1 inch rect
+page_width halve page_height halve halve 1 inch circle
