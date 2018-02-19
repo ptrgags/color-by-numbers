@@ -71,7 +71,8 @@ def format_postscript(image):
     """
     stream = io.StringIO()
     stream.write('[\n')
-    for row in image:
+    # Flip the image since Postscript flips the y-coordinate.
+    for row in reversed(image):
         space_delimited = ' '.join(str(x) for x in row)
         stream.write('    [{}]\n'.format(space_delimited))
 
