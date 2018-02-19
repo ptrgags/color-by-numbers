@@ -39,7 +39,7 @@
     end
 } def
 
-% circle: gray x y r -> ---
+% circle: r g b x y r -> ---
 /circle {
     gsave
     newpath
@@ -47,12 +47,14 @@
     0 360 arc
     closepath
     gsave
-    %1.0 setgray
-    setgray
+    1.0 setgray
     fill
     grestore
     % gray value is already on the stack
     %setgray
+
+    % rgb values are already on stack
+    setrgbcolor
     stroke
 
     grestore

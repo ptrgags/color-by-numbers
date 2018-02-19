@@ -94,9 +94,18 @@ def scaling_factor(img):
 
 def quantize(color, num_colors=6):
     """
-    Remap from the range of [0, 256) -> [0, num_colors) -> [0, 1)
+    Remap from the range of [0, 256) -> [0, num_colors)
     """
-    return color // (256 // num_colors) / num_colors
+    return color // (256 // num_colors)
+
+COLORS = [
+    "0.7 0.7 0.7",
+    "1 0.7 0.7",
+    "0.7 1 0.7",
+    "0.7 0.7 1",
+    "0.7 1 1",
+    "1 0.7 1",
+]
 
 def process_shapes(params, img):
     points_per_pixel = scaling_factor(img)
@@ -105,8 +114,9 @@ def process_shapes(params, img):
         x_points = x * points_per_pixel
         y_points = y * points_per_pixel
         r_points = r * points_per_pixel
-        color = quantize(avg_color)
-        print(f'{color:.2f} {x_points:.2f} {y_points:.2f} {r_points:.2f} circle')
+        color_id = quantize(avg_color)
+        color = COLORS[int(color_id)]
+        print(f'{color} {x_points:.2f} {y_points:.2f} {r_points:.2f} circle')
 
 
 def main():
