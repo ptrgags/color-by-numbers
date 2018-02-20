@@ -104,7 +104,7 @@ COLORS = [
     "0.7 1 0.7",
     "0.7 0.7 1",
     "0.7 1 1",
-    "1 0.7 1",
+    "0.5 0.7 1",
 ]
 
 def process_shapes(params, img):
@@ -122,6 +122,7 @@ def process_shapes(params, img):
 def main():
     img = cv2.imread('images/gears.jpg')
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gray = numpy.flipud(gray)
 
     # Use a circle mask to select a portion of the image
     #result = paint_shapes(gray)
