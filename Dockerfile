@@ -1,12 +1,13 @@
 # Start with the bleeding Edge!
-# TODO: Can this be done with the slim version?
 FROM python:3.6
+
+# Install Python modules
+WORKDIR /setup
+COPY requirements.txt /setup
+RUN pip install -r requirements.txt
 
 # This will be mounted as a volume
 WORKDIR /app
-
-# This is easier than installing from source.
-RUN pip install opencv-python
 
 # Install Ghostscript so we can generate PDFs if needed
 RUN apt-get update
