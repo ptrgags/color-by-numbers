@@ -2,7 +2,9 @@
 import argparse
 
 from color_by_numbers import downscale, shapes
-from color_by_numbers.argparse_helpers import input_image, output_postscript
+from color_by_numbers.argparse_helpers import (
+    input_image, output_postscript, paper_dimensions, to_points
+)
 
 def parse_args():
     """
@@ -27,6 +29,18 @@ def parse_args():
         '--debug',
         action='store_true',
         help='If this flag is specified, save extra images for debugging')
+    common.add_argument(
+        '-p',
+        '--paper-size',
+        type=paper_dimensions,
+        default=paper_dimensions('letter'),
+        help='Choose the size of the paper')
+    common.add_argument(
+        '-m',
+        '--margin',
+        type=to_points,
+        default=to_points('1 in'),
+        help='specify the margin size. "X in" "X cm" and "X pt" are supported')
 
     # Each subcommand will configure its own subparser
     subparsers = parser.add_subparsers(dest='sub_command')
