@@ -1,0 +1,74 @@
+%!
+
+% 72 dots per inch
+/inch {72 mul} def
+
+% Halving a quantity is a common operation here
+/halve {2 div} def
+
+% Draw a rectangle centered around x and y
+% rect: center_x center_y w, h
+/rect {
+    % Store the parameters in the dict stack
+    4 dict begin
+    /h exch def
+    /w exch def
+    /center_y exch def
+    /center_x exch def
+
+    % Calclulate other dimensions for this rectangle
+    /half_w w halve def
+    /half_h h halve def
+
+    % Draw a rectangle centered at (center_x, center_y)
+    gsave
+    newpath
+    % Move to the center of the square
+    center_x center_y moveto
+    % Move to the bottom left corner of the box
+    half_w neg half_h neg rmoveto
+    % Draw a box
+    w 0 rlineto
+    0 h rlineto
+    w neg 0 rlineto
+    closepath
+    stroke
+    grestore
+
+    % Pop dict stack
+    end
+} def
+
+% circle: r g b x y r -> ---
+/circle {
+    gsave
+    newpath
+    % x, y, and r are already on the stack
+    0 360 arc
+    closepath
+    gsave
+    1.0 setgray
+    fill
+    grestore
+    % gray value is already on the stack
+    %setgray
+
+    % rgb values are already on stack
+    setrgbcolor
+    stroke
+
+    grestore
+} def
+
+% TODO: Allow for landscape images too.
+/page_width 8.5 inch def
+/page_height 11 inch def
+
+1 inch 1 inch translate
+
+% Draw a 2x1" box in the center of the page
+%page_width halve page_height halve 2 inch 1 inch rect
+%page_width halve page_height halve halve 1 inch circle
+{% for cmd in image %}
+{{cmd}}
+{% endfor %}
