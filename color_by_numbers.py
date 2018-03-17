@@ -65,7 +65,7 @@ def to_ascii(image):
     # characters at once
     return table[image]
 
-def format_postscript(image):
+def format_postscript(image, calc):
     """
     Take an image and format it as a fragment of a
     postscript file. The rest of it will come fro

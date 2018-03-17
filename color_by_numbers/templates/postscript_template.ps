@@ -1,13 +1,13 @@
 %!
 {% block header %}{% endblock %}
 
+<< /PageSize [{{page_width}} {{page_height}}] >> setpagedevice
+
 % 72 dots per inch
 /inch {72 mul} def
 
-% TODO: Allow for landscape images too.
-% TODO: Handle A4 too.
-/page_width 8.5 inch def
-/page_height 11 inch def
+/page_width {{page_width}} def
+/page_height {{page_height}} def
 
 {% block body %}{%endblock%}
 

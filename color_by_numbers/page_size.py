@@ -4,9 +4,20 @@ class DimensionsCalculator:
     the print area (minus margins) and how many squares of
     a given size fit in the print area.
     """
-    def __init__(self, page_dims, margin):
-        self.page_size = page_dims
+    def __init__(self, paper_dims, margin):
+        # This is the size of the paper in portrait orientation.
+        # self.postscript_dims is the page size for postscript which could
+        # be either
+        self.paper_dims = paper_dims
         self.margin = margin
+
+    @property
+    def postscript_dims(self):
+        """
+        Dimensions to use in the Postscript file in points.
+        This could be either portrait or landscape.
+        """
+        raise NotImplementedError
 
     @property
     def print_area_dims(self):
@@ -16,7 +27,8 @@ class DimensionsCalculator:
 
         This returns (width, height) of the page in points.
         """
-        raise NotImplementedError
+        w, h = self.postscript_dims
+        return (w - 2 * self.margin, h - 2 * self.margin)
 
     def grid_size(self, square_size):
         """
@@ -49,9 +61,9 @@ class DimensionsCalculator:
 
 class PortraitCalculator(DimensionsCalculator):
     @property
-    def print_area_dims(self):
-        w, h = self.page_size
-        return (w - 2 * self.margin, h - 2 * self.margin)
+    def postscript_dims(self):
+        # the paper is already right side up in portrait orientation!
+        return self.paper_dims
 
     def block_size(self, image_dims, square_size):
         _, img_cols = image_dims
@@ -60,9 +72,10 @@ class PortraitCalculator(DimensionsCalculator):
 
 class LandscapeCalculator(DimensionsCalculator):
     @property
-    def print_area_dims(self):
-        w, h = self.page_size
-        return (h - 2 * self.margin, w - 2 * self.margin)
+    def postscript_dims(self):
+        # for landscape we need to swap the paper dimensions
+        w, h = self.paper_dims
+        return h, w
 
     def block_size(self, image_dims, square_size):
         img_rows, _ = image_dims

@@ -51,7 +51,7 @@ def assign_numbers(image, num_colors):
     # Divide to get which grey value to display
     return image // N
 
-def format_postscript(image, args):
+def format_postscript(image, args, page_size):
     """
     Take an image and format it as a PostScript file. Most of the code
     is in a Jinja2 template.
@@ -60,12 +60,14 @@ def format_postscript(image, args):
         loader=PackageLoader('color_by_numbers', 'templates'))
     template = env.get_template('downscale.ps')
 
+    w, h = page_size
     return template.render(
         square_size=args.square_size,
         margin_size=args.margin,
         # flip the image since PostScript has a y-up coordinate system.
-        image=reversed(image)
-    )
+        image=reversed(image),
+        page_width=w,
+        page_height=h)
 
 def configure_parser(subparsers, common):
     """
@@ -114,6 +116,6 @@ def main(args):
     # Generate the PostScript file
     print("Generating printout...")
     with open(args.output, 'w') as f:
-        ps_code = format_postscript(numbers, args)
+        ps_code = format_postscript(numbers, args, calc.postscript_dims)
         f.write(ps_code + '\n')
     print("Done!")
