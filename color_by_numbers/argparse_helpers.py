@@ -52,10 +52,15 @@ def paper_dimensions(dims):
     try:
         # Convert to width/height using to_points
         w, h = [to_points(x.strip()) for x in preprocessed.split(' x ')]
-        return w, h
     except ValueError as e:
         raise argparse.ArgumentTypeError(
             'dimensions must be "letter", "A4" or "<width> x <height>"')
+
+    if w > h:
+        raise argparse.ArgumentTypeError(
+            'page size must be specified in portrait orientation (w >= h)')
+
+    return w, h
 
 def to_points(dim):
     """
