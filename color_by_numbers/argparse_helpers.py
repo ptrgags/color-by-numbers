@@ -47,7 +47,7 @@ def paper_dimensions(dims):
         'A4': '210 mm x 297 mm'
     }
     # Lookup presets. Default to the original string.
-    preprocessed = PRESETS.get(dims.lower(), dims)
+    preprocessed = PRESETS.get(dims, dims)
 
     try:
         # Convert to width/height using to_points
