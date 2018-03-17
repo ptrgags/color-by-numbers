@@ -72,7 +72,7 @@ def format_postscript(image):
     template.ps
     """
     env = Environment(
-        loader=PackageLoader('color_by_numbers.downscale', 'templates'))
+        loader=PackageLoader('color_by_numbers', 'templates'))
     template = env.get_template('downscale.ps')
 
     return template.render(

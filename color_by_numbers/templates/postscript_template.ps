@@ -1,0 +1,14 @@
+%!
+{% block header %}{% endblock %}
+
+% 72 dots per inch
+/inch {72 mul} def
+
+% TODO: Allow for landscape images too.
+% TODO: Handle A4 too.
+/page_width 8.5 inch def
+/page_height 11 inch def
+
+{% block body %}{%endblock%}
+
+showpage

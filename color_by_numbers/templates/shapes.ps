@@ -1,7 +1,10 @@
-%!
+{% extends "postscript_template.ps"}
+{% block header %}
+% Color-by-numbers-esque sheet that uses colored shapes
+% to indicate which regions to color.
+{% endblock %}
 
-% 72 dots per inch
-/inch {72 mul} def
+{% block body %}
 
 % Halving a quantity is a common operation here
 /halve {2 div} def
@@ -60,10 +63,7 @@
     grestore
 } def
 
-% TODO: Allow for landscape images too.
-/page_width 8.5 inch def
-/page_height 11 inch def
-
+% TODO: Handle margins in layout
 1 inch 1 inch translate
 
 % Draw a 2x1" box in the center of the page
@@ -72,3 +72,4 @@
 {% for cmd in image %}
 {{cmd}}
 {% endfor %}
+{% endblock %}

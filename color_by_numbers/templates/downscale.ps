@@ -1,11 +1,11 @@
-%!
+{% extends "postscript_template.ps" %}
+{% block header %}
 % Downscale Postscript template
 % This file generates a color-by-numbers sheet. This PostScript code is
 % formatted in Python using jinja2
+{% endblock %}
 
-% 72 dots per inch
-/inch {72 mul} def
-
+{% block body %}
 % how big is each square?
 /sqr_size {{square_size}} def
 
@@ -15,14 +15,9 @@
 % margin size in all directions
 /margin {{margin_size}} def
 
-% size of a letter page in portrait orientation
-% TODO: Handle landscape orientation
-/width 8.5 inch def
-/height 11 inch def
-
 % right and top edges (accounting for margin)
-/right width margin sub def
-/top height margin sub def
+/right page_width margin sub def
+/top page_width margin sub def
 
 % draw a square on the screen. (x, y) is the bottom left corner
 % square: x y -> ---
@@ -89,4 +84,4 @@ setfont
     [{{row | join(" ")}}]
 {% endfor -%}
 ] show_image
-showpage
+{% endblock %}
