@@ -3,9 +3,11 @@
 This is a prototype of my color-by-numbers script. I still need to plan this
 out more.
 """
+import io
+
 import cv2
 import numpy
-import io
+from jinja2 import Environment, PackageLoader
 
 def downsample(image, block_size=32):
     """
@@ -69,16 +71,16 @@ def format_postscript(image):
     postscript file. The rest of it will come fro
     template.ps
     """
-    stream = io.StringIO()
-    stream.write('[\n')
-    # Flip the image since Postscript flips the y-coordinate.
-    for row in reversed(image):
-        space_delimited = ' '.join(str(x) for x in row)
-        stream.write('    [{}]\n'.format(space_delimited))
+    env = Environment(
+        loader=PackageLoader('color_by_numbers.downscale', 'templates'))
+    template = env.get_template('downscale.ps')
 
-    stream.write('] show_image\n')
-    stream.write('showpage')
-    return stream.getvalue()
+    return template.render(
+        square_size="0.25 inch",
+        margin_size="1 inch",
+        # flip the image since PostScript has a y-up coordinate system.
+        image=reversed(image)
+    )
 
 def main():
     """

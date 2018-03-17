@@ -1,3 +1,3 @@
 #!/bin/bash
-python color_by_numbers.py > output/fragment.ps
-cat template.ps output/fragment.ps > output/sample.ps
+python color_by_numbers.py > output/downscale_example.ps
+ps2pdf output/downscale_example.ps output/downscale_example.pdf
