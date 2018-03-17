@@ -36,6 +36,12 @@ def parse_args():
         default=paper_dimensions('letter'),
         help='Choose the size of the paper')
     common.add_argument(
+        '-n',
+        '--num-colors',
+        type=int,
+        default=6,
+        help='This determines how many numbers are used in the printout')
+    common.add_argument(
         '-m',
         '--margin',
         type=to_points,

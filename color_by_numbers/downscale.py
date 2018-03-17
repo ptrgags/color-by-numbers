@@ -4,12 +4,13 @@ It downsamples the image and computes the average color in each block.
 """
 import cv2
 import numpy
+from jinja2 import Environment, PackageLoader
 
 from color_by_numbers.common import debug_save
 from color_by_numbers.argparse_helpers import to_points
 from color_by_numbers.page_size import DimensionsCalculator
 
-def downsample(image, block_size=32):
+def downsample(image, block_size):
     """
     Take a grayscale image and downsample. Downsampling is done
     by averaging blocks of block_size x block_size
@@ -37,6 +38,34 @@ def downsample(image, block_size=32):
 
     # Return the new tiny image
     return result
+
+def assign_numbers(image, num_colors):
+    """
+    Convert from a range of [0, 256)
+    to a range [0, num_colors). This will
+    be the grey values used in the color by numbers.
+    """
+    # How  many steps are per color?
+    N = 256 // num_colors
+
+    # Divide to get which grey value to display
+    return image // N
+
+def format_postscript(image, args):
+    """
+    Take an image and format it as a PostScript file. Most of the code
+    is in a Jinja2 template.
+    """
+    env = Environment(
+        loader=PackageLoader('color_by_numbers', 'templates'))
+    template = env.get_template('downscale.ps')
+
+    return template.render(
+        square_size=args.square_size,
+        margin_size=args.margin,
+        # flip the image since PostScript has a y-up coordinate system.
+        image=reversed(image)
+    )
 
 def configure_parser(subparsers, common):
     """
@@ -76,3 +105,15 @@ def main(args):
     img = downsample(img, block_size)
     debug_save('downsampled.png', img, args)
     print(f'Downsampled image size (px): {img.shape}')
+
+    # Reduce the number of colors
+    print("Numbering colors...")
+    numbers = assign_numbers(img, args.num_colors)
+    debug_save('reduced.png', numbers * (256 // args.num_colors), args)
+
+    # Generate the PostScript file
+    print("Generating printout...")
+    with open(args.output, 'w') as f:
+        ps_code = format_postscript(numbers, args)
+        f.write(ps_code + '\n')
+    print("Done!")
