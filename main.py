@@ -22,6 +22,11 @@ def parse_args():
         'output',
         type=output_postscript,
         help='The output file This path must match output/*.ps')
+    common.add_argument(
+        '-d',
+        '--debug',
+        action='store_true',
+        help='If this flag is specified, save extra images for debugging')
 
     # Each subcommand will configure its own subparser
     subparsers = parser.add_subparsers(dest='sub_command')
@@ -36,7 +41,6 @@ def main():
     Entry point for the program
     """
     args = parse_args()
-    print(args)
     args.func(args)
 
 if __name__ == '__main__':
