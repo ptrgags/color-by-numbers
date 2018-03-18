@@ -181,3 +181,5 @@ def main(args):
         print('Offsets:', offsets.shape)
 
         # TODO: calculate radii and shape centers in points
+        #radius, centers = calculate_shape_dimensions(
+        #    diameter, centers, scaling_factor)
