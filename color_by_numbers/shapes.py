@@ -85,14 +85,56 @@ def make_circle_mask(diameter):
 
     return mask
 
-def calculate_colors(num_samples, diameter, img):
+def pick_mask_offsets(img, diameter, num_samples):
+    """
+    Randomly slide the mask to a position (row, col) so it fits within the
+    size of the image
+    """
+    # randomly pick rows and columns. The kernel must stay within the bounds
+    # of the image because I said so.
+    rows, cols = img.shape
+    row_offsets = numpy.random.randint(rows - diameter + 1, size=num_samples)
+    col_offsets = numpy.random.randint(cols - diameter + 1, size=num_samples)
+
+    # Turn the offsets into two columns of a larger matrix. This way we can
+    # think of it as N 2-vectors (row, col)
+    return numpy.stack([row_offsets, col_offsets], axis=1)
+
+def make_slice(offset, diameter, img):
+    """
+    make a slice from the image.
+    """
+    row, col = offset
+    return img[row:row + diameter, col:col + diameter]
+
+def slice_image(img, mask_offsets, diameter):
+    """
+    Return an array of slices of an image given the row/column offsets
+    """
+    return numpy.apply_along_axis(make_slice, 1, mask_offsets, diameter, img)
+
+def reduce_colors(colors, num_colors):
+    """
+    Quantize colors so there are only a few.
+    """
+    return colors // (256 // num_colors)
+
+
+def calculate_colors(num_samples, diameter, img, args):
     """
     Calculate colors for all the shapes for this diameter.
     Use Numpy vector operations whenever possible.
+
+    This returns the average colors and the mask offsets that generated them.
     """
     rows, cols = img.shape
     circle_mask = make_circle_mask(diameter)
-    print(circle_mask)
+    mask_offsets = pick_mask_offsets(img, diameter, num_samples)
+    slices = slice_image(img, mask_offsets, diameter)
+    avg_colors = numpy.mean(slices, axis=(1, 2))
+    quantized = reduce_colors(avg_colors, args.num_colors)
+
+    return quantized, mask_offsets
 
 def configure_parser(subparsers, common):
     """
@@ -119,6 +161,8 @@ def main(args):
     img = cv2.cvtColor(args.input, cv2.COLOR_BGR2GRAY)
     img = numpy.flipud(img)
 
+    #scaling_factor = calculate_points_per_pixel(img, args)
+
     for diameter in choose_diameters(img, args):
         print('-' * 50)
 
@@ -132,4 +176,8 @@ def main(args):
         print('Shape commands:', shape_commands.shape)
 
         #radius = calculate_radius(diameter, img)
-        colors = calculate_colors(num_samples, diameter, img)
+        colors, offsets = calculate_colors(num_samples, diameter, img, args)
+        print('Colors:', colors.shape)
+        print('Offsets:', offsets.shape)
+
+        # TODO: calculate radii and shape centers in points
