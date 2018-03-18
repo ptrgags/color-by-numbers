@@ -58,6 +58,42 @@ def pick_shapes(num_samples):
     all_shapes = poly_shapes + ['square', 'circle']
     return numpy.random.choice(all_shapes, num_samples)
 
+def make_circle_mask(diameter):
+    """
+    Make a circle-shaped mask in a rectangle of size diameter x diameter.
+
+    This mask will be used like a kernel that does an average blur within
+    a circle. Anything outside the circle will not be included in the sum.
+    """
+
+    # Generate an empty mask diameter x diameter
+    mask = numpy.zeros((diameter, diameter))
+
+    # Generate centered x and y coordinates
+    ys, xs = numpy.mgrid[:diameter, :diameter]
+    radius = diameter // 2
+    centered_ys = ys - radius
+    centered_xs = xs - radius
+
+    # Paint a circle with radius `radius`
+    circle = centered_xs ** 2 + centered_ys ** 2 <= radius ** 2
+    mask[circle] = 1
+
+    # Normalize the mask by dividing by the total number of cells with
+    # a 1 in them:
+    mask /= mask.sum()
+
+    return mask
+
+def calculate_colors(num_samples, diameter, img):
+    """
+    Calculate colors for all the shapes for this diameter.
+    Use Numpy vector operations whenever possible.
+    """
+    rows, cols = img.shape
+    circle_mask = make_circle_mask(diameter)
+    print(circle_mask)
+
 def configure_parser(subparsers, common):
     """
     Configure parser for the downscale subcommand
@@ -96,4 +132,4 @@ def main(args):
         print('Shape commands:', shape_commands.shape)
 
         #radius = calculate_radius(diameter, img)
-        #colors = calculate_colors(num_samples, diameter, img)
+        colors = calculate_colors(num_samples, diameter, img)
