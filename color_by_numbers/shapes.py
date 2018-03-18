@@ -40,6 +40,24 @@ def pick_num_samples(diameter, img):
 
     return area // shape_area
 
+def pick_shapes(num_samples):
+    """
+    Randomly pick shapes. These correspond to
+    PostScript commands in the jinja template.
+
+    Supported shapes:
+    '3 poly'
+    ...
+    '8 poly'
+    'square'
+    'circle'
+    """
+    MIN_SIDES = 3
+    MAX_SIDES = 8
+    poly_shapes = [f'{n} poly' for n in range(MIN_SIDES, MAX_SIDES + 1)]
+    all_shapes = poly_shapes + ['square', 'circle']
+    return numpy.random.choice(all_shapes, num_samples)
+
 def configure_parser(subparsers, common):
     """
     Configure parser for the downscale subcommand
@@ -66,12 +84,16 @@ def main(args):
     img = numpy.flipud(img)
 
     for diameter in choose_diameters(img, args):
+        print('-' * 50)
+
         # TODO:  Stopping condition on tiny diameters
         print('Diameter:', diameter)
 
         num_samples = pick_num_samples(diameter, img)
         print('Samples:', num_samples)
 
-        #region_shapes = pick_shapes(num_samples)
+        shape_commands = pick_shapes(num_samples)
+        print('Shape commands:', shape_commands.shape)
+
         #radius = calculate_radius(diameter, img)
         #colors = calculate_colors(num_samples, diameter, img)

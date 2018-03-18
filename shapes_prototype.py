@@ -35,7 +35,6 @@ def paint_shapes(image):
         iterations = int(area // circle_area)
         print(f"i={i}, r={radius}, iters={iterations:,}")
 
-
         # Make more shapes the smaller the shapes are
         #iterations = (i + 1) * 5
         for j in range(iterations):
