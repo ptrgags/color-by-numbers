@@ -6,8 +6,13 @@ Each polygon has a color number like in downscale. However, since
 putting labels on each region would be confusing to look at,
 I changed it so that each polygon is stroked with a different color.
 """
-import numpy
+import itertools
+
 import cv2
+import numpy
+from jinja2 import Environment, PackageLoader
+
+from color_by_numbers.page_size import DimensionsCalculator
 
 def choose_diameters(img, args):
     """
@@ -136,6 +141,58 @@ def calculate_colors(num_samples, diameter, img, args):
 
     return quantized, mask_offsets
 
+def calculate_shape_dimensions(diameter, mask_offsets, scaling_factor):
+    radius_px = diameter // 2
+
+    # mask_offsets are the top left corner. We want the center of each mask.
+    centers_px = mask_offsets + radius_px
+
+    # Convert  to points
+    radius_pt = radius_px * scaling_factor
+    centers_pt = centers_px * scaling_factor
+
+    return radius_pt, centers_pt
+
+COLORS = [
+    "0.7 0.7 0.7",
+    "1 0.7 0.7",
+    "0.7 1 0.7",
+    "0.7 0.7 1",
+    "0.7 1 1",
+    "0.5 0.7 1",
+]
+
+def format_postscript(colors, radius, centers, shape_commands):
+    """
+    Format postscript commands from the given circle geometry
+    """
+    num_samples =  len(colors)
+    for i in range(num_samples):
+        color_index = colors[i]
+        # TODO: Generate this using HSB
+        color = COLORS[int(color_index)]
+        y, x = centers[i]
+        cmd = shape_commands[i]
+        yield f'{color} {x:.2f} {y:.2f} {radius} circle'
+
+def write_postcript(image_commands, args, page_size):
+    """
+    Write a PostScript file with the given commands
+    """
+    env = Environment(
+        loader=PackageLoader('color_by_numbers', 'templates'))
+    template = env.get_template('shapes.ps')
+
+    w, h = page_size
+    code = template.render(
+        margin_size=args.margin,
+        image=itertools.chain(*image_commands),
+        page_width=w,
+        page_height=h)
+
+    with open(args.output, 'w') as f:
+        f.write(code + '\n')
+
 def configure_parser(subparsers, common):
     """
     Configure parser for the downscale subcommand
@@ -161,7 +218,13 @@ def main(args):
     img = cv2.cvtColor(args.input, cv2.COLOR_BGR2GRAY)
     img = numpy.flipud(img)
 
-    #scaling_factor = calculate_points_per_pixel(img, args)
+    # This calculator will be used to handle scaling things to
+    # points
+    calc = DimensionsCalculator.get_size_calculator(
+        img.shape, args.paper_size, args.margin)
+    scaling_factor = calc.points_per_pixel(img)
+
+    ps_code = []
 
     for diameter in choose_diameters(img, args):
         print('-' * 50)
@@ -175,11 +238,16 @@ def main(args):
         shape_commands = pick_shapes(num_samples)
         print('Shape commands:', shape_commands.shape)
 
-        #radius = calculate_radius(diameter, img)
         colors, offsets = calculate_colors(num_samples, diameter, img, args)
         print('Colors:', colors.shape)
         print('Offsets:', offsets.shape)
 
-        # TODO: calculate radii and shape centers in points
-        #radius, centers = calculate_shape_dimensions(
-        #    diameter, centers, scaling_factor)
+        # get the radius (scalar) and the coordinates of the center
+        # in points
+        radius, centers = calculate_shape_dimensions(
+            diameter, offsets, scaling_factor)
+
+        gen = format_postscript(colors, radius, centers, shape_commands)
+        ps_code.append(gen)
+
+    write_postcript(ps_code, args, calc.postscript_dims)

@@ -30,6 +30,12 @@ class DimensionsCalculator:
         w, h = self.postscript_dims
         return (w - 2 * self.margin, h - 2 * self.margin)
 
+    def points_per_pixel(self, image):
+        """
+        Calculate the number of points per pixel
+        """
+        raise NotImplementedError
+
     def grid_size(self, square_size):
         """
         Given the size of a square, calculate how many squares
@@ -53,8 +59,8 @@ class DimensionsCalculator:
 
     @classmethod
     def get_size_calculator(cls, image_dims, page_dims, margin):
-        w, h = image_dims
-        if w >= h:
+        rows, cols = image_dims
+        if rows >= cols:
             return PortraitCalculator(page_dims, margin)
         else:
             return LandscapeCalculator(page_dims, margin)
@@ -64,6 +70,12 @@ class PortraitCalculator(DimensionsCalculator):
     def postscript_dims(self):
         # the paper is already right side up in portrait orientation!
         return self.paper_dims
+
+    def points_per_pixel(self, image):
+        _, cols = image.shape
+        x_points, _ = self.print_area_dims
+        print(f'{x_points} {cols} {x_points / cols}')
+        return x_points / cols
 
     def block_size(self, image_dims, square_size):
         _, img_cols = image_dims
@@ -76,6 +88,12 @@ class LandscapeCalculator(DimensionsCalculator):
         # for landscape we need to swap the paper dimensions
         w, h = self.paper_dims
         return h, w
+
+    def points_per_pixel(self, image):
+        rows, _ = image.shape
+        _, y_points = self.print_area_dims
+        print(f'{y_points} {rows} {y_points / rows}')
+        return y_points / rows
 
     def block_size(self, image_dims, square_size):
         img_rows, _ = image_dims

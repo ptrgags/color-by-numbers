@@ -1,4 +1,4 @@
-{% extends "postscript_template.ps"}
+{% extends "postscript_template.ps" %}
 {% block header %}
 % Color-by-numbers-esque sheet that uses colored shapes
 % to indicate which regions to color.
@@ -64,7 +64,7 @@
 } def
 
 % TODO: Handle margins in layout
-1 inch 1 inch translate
+{{margin_size}} {{margin_size}} translate
 
 % Draw a 2x1" box in the center of the page
 %page_width halve page_height halve 2 inch 1 inch rect
