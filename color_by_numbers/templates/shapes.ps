@@ -9,6 +9,8 @@
 % Halving a quantity is a common operation here
 /halve {2 div} def
 
+/line_thickness 0.5 def
+
 % Draw a rectangle centered around x and y
 % rect: center_x center_y w, h
 /rect {
@@ -53,23 +55,72 @@
     1.0 setgray
     fill
     grestore
-    % gray value is already on the stack
-    %setgray
 
     % rgb values are already on stack
     setrgbcolor
+    line_thickness setlinewidth
     stroke
 
     grestore
 } def
 
-% TODO: Handle margins in layout
+% Draw a polygon with N sides
+% poly: r g b x y r n -> ---
+/poly {
+
+    % store x y r and n
+    5 dict begin
+    /n exch def
+    /r exch def
+    /y exch def
+    /x exch def
+
+    % calculate the angle between each point
+    /angle_delta 360 n div def
+
+    gsave
+    newpath
+
+    % scale by r and move to the center
+    x y translate
+    r r scale
+
+    % draw a polygon
+    1 0 moveto
+    1 1 n 1 sub {
+        3 dict begin
+        /angle exch angle_delta mul def
+        /px angle cos def
+        /py angle sin def
+        px py lineto
+        end
+    } for
+    closepath
+
+    % Stoke and fill
+    gsave
+    1.0 setgray
+    fill
+    grestore
+
+    % rgb values are already on stack
+    setrgbcolor
+    % we scaled the coordinates, so have to set the line width back to normals
+    line_thickness r div setlinewidth
+    stroke
+
+    grestore
+
+    % Pop the dict stack
+    end
+} def
+
 {{margin_size}} {{margin_size}} translate
 
 % Draw a 2x1" box in the center of the page
 %page_width halve page_height halve 2 inch 1 inch rect
 %page_width halve page_height halve halve 1 inch circle
-{% for cmd in image %}
+{% for cmd in image -%}
 {{cmd}}
 {% endfor %}
 {% endblock %}

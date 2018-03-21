@@ -54,13 +54,12 @@ def pick_shapes(num_samples):
     '3 poly'
     ...
     '8 poly'
-    'square'
     'circle'
     """
     MIN_SIDES = 3
     MAX_SIDES = 8
     poly_shapes = [f'{n} poly' for n in range(MIN_SIDES, MAX_SIDES + 1)]
-    all_shapes = poly_shapes + ['square', 'circle']
+    all_shapes = poly_shapes + ['circle']
     return numpy.random.choice(all_shapes, num_samples)
 
 def make_circle_mask(diameter):
@@ -173,7 +172,7 @@ def format_postscript(colors, radius, centers, shape_commands):
         color = COLORS[int(color_index)]
         y, x = centers[i]
         cmd = shape_commands[i]
-        yield f'{color} {x:.2f} {y:.2f} {radius} circle'
+        yield f'{color} {x:.2f} {y:.2f} {radius} {cmd}'
 
 def write_postcript(image_commands, args, page_size):
     """
