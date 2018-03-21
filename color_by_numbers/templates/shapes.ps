@@ -9,40 +9,7 @@
 % Halving a quantity is a common operation here
 /halve {2 div} def
 
-/line_thickness 0.5 def
-
-% Draw a rectangle centered around x and y
-% rect: center_x center_y w, h
-/rect {
-    % Store the parameters in the dict stack
-    4 dict begin
-    /h exch def
-    /w exch def
-    /center_y exch def
-    /center_x exch def
-
-    % Calclulate other dimensions for this rectangle
-    /half_w w halve def
-    /half_h h halve def
-
-    % Draw a rectangle centered at (center_x, center_y)
-    gsave
-    newpath
-    % Move to the center of the square
-    center_x center_y moveto
-    % Move to the bottom left corner of the box
-    half_w neg half_h neg rmoveto
-    % Draw a box
-    w 0 rlineto
-    0 h rlineto
-    w neg 0 rlineto
-    closepath
-    stroke
-    grestore
-
-    % Pop dict stack
-    end
-} def
+/line_thickness {{line_thickness}} def
 
 % circle: r g b x y r -> ---
 /circle {

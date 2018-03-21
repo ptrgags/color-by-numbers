@@ -13,6 +13,7 @@ import numpy
 from jinja2 import Environment, PackageLoader
 
 from color_by_numbers.page_size import DimensionsCalculator
+from color_by_numbers.argparse_helpers import to_points
 
 def choose_diameters(img, args):
     """
@@ -193,6 +194,7 @@ def write_postcript(image_commands, args, page_size):
     code = template.render(
         margin_size=args.margin,
         image=itertools.chain(*image_commands),
+        line_thickness=args.line_width,
         page_width=w,
         page_height=h)
 
@@ -213,6 +215,12 @@ def configure_parser(subparsers, common):
         help=(
             'Maximum number of iterations of covering the image with circles. '
             'Note that this is O(n^2) in the number of iterations'))
+    parser_shapes.add_argument(
+        '-l',
+        '--line-width',
+        type=to_points,
+        default=0.3,
+        help='Line width for all shapes in points')
     parser_shapes.set_defaults(func=main)
 
 def main(args):
