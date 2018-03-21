@@ -152,24 +152,31 @@ def calculate_shape_dimensions(diameter, mask_offsets, scaling_factor):
 
     return radius_pt, centers_pt
 
-COLORS = [
-    "0.7 0.7 0.7",
-    "1 0.7 0.7",
-    "0.7 1 0.7",
-    "0.7 0.7 1",
-    "0.7 1 1",
-    "0.5 0.7 1",
-]
+def make_color_table(args):
+    """
+    make a table of N colors in HSB.
 
-def format_postscript(colors, radius, centers, shape_commands):
+    The first color will be black, the rest will be evenly-spaced hues
+    """
+    black = "0 0 0"
+    saturation = 1.0
+    brightness = 1.0
+
+    # We want num_colors - 1 evenly-spaced hues.
+    angle_delta = 1.0 / (args.num_colors - 1)
+    hues = [i * angle_delta for i in range(args.num_colors -  1)]
+    hsb = [f'{hue:.2f} {saturation:.2f} {brightness:.2f}' for hue in hues]
+    return [black] + hsb
+
+def format_postscript(colors, radius, centers, shape_commands, args):
     """
     Format postscript commands from the given circle geometry
     """
     num_samples =  len(colors)
+    table = make_color_table(args)
     for i in range(num_samples):
         color_index = colors[i]
-        # TODO: Generate this using HSB
-        color = COLORS[int(color_index)]
+        color = table[int(color_index)]
         y, x = centers[i]
         cmd = shape_commands[i]
         yield f'{color} {x:.2f} {y:.2f} {radius} {cmd}'
@@ -246,7 +253,7 @@ def main(args):
         radius, centers = calculate_shape_dimensions(
             diameter, offsets, scaling_factor)
 
-        gen = format_postscript(colors, radius, centers, shape_commands)
+        gen = format_postscript(colors, radius, centers, shape_commands, args)
         ps_code.append(gen)
 
     write_postcript(ps_code, args, calc.postscript_dims)
