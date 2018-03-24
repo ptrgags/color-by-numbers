@@ -84,6 +84,32 @@ run the Python code from the repo directly, follow these instructions.
 * The output directory **MUST** be the `output/` directory of this repo for the
   same reasons.
 
+## How to color the output files:
+
+### Downscale
+
+Here are the coloring rules:
+
+* There are `--num-colors` colors. Let's number them with integers from
+  `[0, N)`.
+* 0 is the darkest color, `N-1` is the brightest color
+* The artist decides a gradient of any N colors. this could be varying
+  shades of a single color, or many different colors. The only important
+  choice is that the gradient must go from dark to light.
+* Start coloring!
+
+This method of coloring follows the rules of
+[Querkles](http://www.querkles.net/) by Thomas Pavitte with some slight
+modifications:
+
+1. My script lets you pick how many colors to use. Querkles always uses 5 colors
+    plus the white background color
+1. My coloring pages do not use a background color. If you want  part of the
+    image to be white, don't color in the brightest color (`N - 1`)
+1. As a programmer, I started the numbering at 0 instead of 1.
+
+### Shapes
+
 ## How it Works
 
 ### Downscale Algorithm
