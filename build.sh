@@ -1,4 +1,8 @@
 #!/bin/bash
+# This script builds the official build of Color by Numbers
+VERSION=$(cat VERSION)
 
-# This script builds the docker container from the Dockerfile
-docker build -t ptrgags/color-by-numbers:experiment .
+# Make the build and tag it with a version number
+docker build \
+-t ptrgags/color-by-numbers:latest \
+-t ptrgags/color-by-numbers:$VERSION .
