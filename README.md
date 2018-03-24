@@ -83,3 +83,27 @@ run the Python code from the repo directly, follow these instructions.
   two directories are created by mounting 2 directories on the host machine.
 * The output directory **MUST** be the `output/` directory of this repo for the
   same reasons.
+
+## How it Works
+
+### Downscale Algorithm
+
+This algorithm does the following:
+
+1. Read the command line arguments. (see `./main.py downscale --help`)
+1. Read in the input image and convert it to grayscale.
+1. We want to subdivide the image into a grid of squares. Using the image size,
+    the page size (`--page-size`), the margin size (`--margin`), and the
+    desired size per square(`--square-size`), calculate how many pixels wide
+    each grid square is on the input image.
+1. Shrink the image, converting squares of the calculated size into single
+    pixels. The average color is taken for each square.
+1. Bucket the colors of this downsampled image into the number specified
+    by the user (`--num-colors`).
+1. Scale down these values from `[0, 255]` to `[0, num_colors)`.
+1. Use Jinja2 to template a PostScript file that draws a grid with a number
+    per cell. These numbers correspond to the numbers we assigned in the
+    previous step.
+1. Write the PostScript file to the output directory.
+
+[Here is an example I colored](https://ptrgags.deviantart.com/art/2018-03-21-WIP-Sample-Color-By-Numbers-736609991)
