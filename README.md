@@ -1,7 +1,8 @@
 # Color by Numbers (2018)
 
 This is a Python script that uses OpenCV and Jinja2 to turn photos into
-coloring book pages!
+coloring book pages. The result is a printout page that one can print and
+color!
 
 ## Overview
 
@@ -84,7 +85,7 @@ run the Python code from the repo directly, follow these instructions.
 * The output directory **MUST** be the `output/` directory of this repo for the
   same reasons.
 
-## How to color the output files:
+## Coloring Rules
 
 ### Downscale
 
@@ -109,6 +110,28 @@ modifications:
 1. As a programmer, I started the numbering at 0 instead of 1.
 
 ### Shapes
+
+When I designed the Shapes algorithm, I wanted to have a similar nummbering
+system to Downscale. However, I realized that it would be impossible to
+read the numbers with so many overlapping shapes. Therefore, I came up
+with these modified rules:
+
+* Shapes with black outlines are always the darkest color
+* Shapes with red outlines are always the second darkest color
+* As you go through the color wheel from red -> green -> blue, they correspond
+  to *brightness* values. These colors are evenly spaced on the color wheel.
+
+For example, for `--num-colors 6` (the default), you get shapes with the
+following outline color:
+
+| Outline Color | Brightness |
+|---------------|------------|
+| Black         | 0 - Darkest color in gradient
+| Red           | 1 |
+| Yellow-green  | 2 |
+| Green         | 3 |
+| Blue          | 4 |
+| Red-violet    | 5 - Brightest color in gradient |
 
 ## How it Works
 
