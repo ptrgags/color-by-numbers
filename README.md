@@ -107,3 +107,42 @@ This algorithm does the following:
 1. Write the PostScript file to the output directory.
 
 [Here is an example I colored](https://ptrgags.deviantart.com/art/2018-03-21-WIP-Sample-Color-By-Numbers-736609991)
+
+### Shapes Algorithm
+
+This algorithm does the following:
+
+1. Read the command line arguments
+1. Read in the image and convert it to grayscale
+1. Given the page size (`--page-size`), margin size (`--margin`) and the size
+    of the image, calculate how many points of the output file are needed per
+    pixel of the input image.
+1. Now let's start covering the page with shapes! Repeat the following for
+    every iteration from 0 to `--iterations`:
+    1. Compute the diameter of the circles for this iteration. Start with
+        about half the print area's (page - margins) shorter side. Then do
+        1/4, 1/8, etc., halving the diameter at each iteration.
+    1. Calculate how many shapes we need to approximately cover the print
+        area. I use the formula `img.rows * img.cols / circle_diameter ** 2`
+        I'm using the bounding box rather than the circle itself, it's close
+        enough.
+    1. Randomly pick the shape types. Circles and regular polygons from 3-8
+        sides are all equally likely. Note that even the polygons will be
+        colored from a circular region of the input image. The result of this
+        is an array of PostScript commands for the different shapes.
+    1. Calculate the colors for each shape. This involves the following:
+        1. Randomly select a slice out of the image of size
+            `circle_diameter x circle_diameter`. Keep track of the positions of
+            these slices in the image.
+        1. Compute the average color using a circularly-shaped kernel of the
+            same size as the circle.
+        1. Quantize the colors so there are only `--num-colors` values
+        1. Assign each value a color. `0` is always assigned black. `1` is
+            always assigned red. all the other `--num-colors - 2` colors have
+            evenly spaced hues around the color wheel
+    1. Calculate the centers and radii of the circles *in points* so we
+        know where and how big the shapes are in PostScript
+    1. Generate lines of PostScript code that look like this:
+        `hue saturation brightness x y r shape_command`
+1. Finally, gather up the lines of PostScript code and use Jinja2 to insert
+    them into a PostScript template.
