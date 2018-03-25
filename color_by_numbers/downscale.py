@@ -46,10 +46,10 @@ def assign_numbers(image, num_colors):
     be the grey values used in the color by numbers.
     """
     # How  many steps are per color?
-    N = 256 // num_colors
+    bucket_size = 256 / num_colors
 
     # Divide to get which grey value to display
-    return image // N
+    return image // bucket_size
 
 def format_postscript(image, args, page_size):
     """

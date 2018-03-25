@@ -122,8 +122,8 @@ def reduce_colors(colors, num_colors):
     """
     Quantize colors so there are only a few.
     """
-    return colors // (256 // num_colors)
-
+    bucket_size = 256 / num_colors
+    return colors // bucket_size
 
 def calculate_colors(num_samples, diameter, img, args):
     """
