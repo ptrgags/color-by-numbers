@@ -49,7 +49,7 @@ def assign_numbers(image, num_colors):
     bucket_size = 256 / num_colors
 
     # Divide to get which grey value to display
-    return image // bucket_size
+    return (image // bucket_size).astype(int)
 
 def format_postscript(image, args, page_size):
     """
