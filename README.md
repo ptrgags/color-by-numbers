@@ -195,3 +195,12 @@ This algorithm does the following:
         `hue saturation brightness x y r shape_command`
 1. Finally, gather up the lines of PostScript code and use Jinja2 to insert
     them into a PostScript template.
+
+Examples:
+
+* [Two Liberty Place](https://ptrgags.deviantart.com/art/2018-03-23-Color-by-Numbers-Shapes-Take-1-737409838)
+* [Helix](https://ptrgags.deviantart.com/art/2018-03-25-Color-by-Numbers-Shapes-Take-2-737412221)
+* [Philadelphia's City Hall](https://ptrgags.deviantart.com/art/2018-03-25-Color-by-Numbers-Shapes-Take-3-737413483)
+
+(Note: DeviantArt doesn't show the preview image on the page. See
+[here](https://ptrgags.deviantart.com/gallery/66017777/Programming-Art) for pictures of my colored printouts)
